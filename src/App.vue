@@ -1,28 +1,74 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link>|
-      <router-link to="/about">About</router-link>|
-    </div>
-    <router-view/>
-    <v-footer class="pa-5">
-      <div>&copy; project-vue-library by Guilherme Bertoldi</div>
+  <v-app id="inspire">
+    <v-navigation-drawer v-model="drawer" fixed app>
+      <v-list dense>
+        <v-list-tile>
+          <v-list-tile-action>
+            <v-icon>home</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <router-link to="/">Home</router-link>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-divider></v-divider>
+        <v-list-tile>
+          <v-list-tile-action>
+            <v-icon>note_add</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <router-link to="/livro">Adicionar livro</router-link>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+      <v-footer color="indigo" app>
+        <v-spacer></v-spacer>
+        <span class="white--text">&copy; By Guilherme Bertoldi 2019</span>
+        <v-spacer></v-spacer>
+      </v-footer>
+    </v-navigation-drawer>
+    <v-toolbar color="indigo" dark fixed app>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title>Biblioteca</v-toolbar-title>
+    </v-toolbar>
+    <v-content>
+      <v-container fluid fill-height>
+        <v-layout justify-center align-center>
+          <v-flex text-xs-center>
+            <v-flex xs12 sm6 offset-sm3>
+              <CardLivros/>
+            </v-flex>
+          </v-flex>
+          <v-btn color="pink" dark medium absolute bottom right fab style="margin-bottom: 50px;">
+            <v-icon>note_add</v-icon>
+          </v-btn>
+        </v-layout>
+      </v-container>
+    </v-content>
+    <v-footer color="indigo" app>
+      <v-spacer></v-spacer>
+      <span class="white--text">&copy; By Guilherme Bertoldi 2019</span>
+      <v-spacer></v-spacer>
     </v-footer>
-  </div>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import CardLivros from "./components/CardLivros";
 
 export default {
   name: "App",
   components: {
-    HelloWorld
+    CardLivros
   },
-  data() {
-    return {
-      //
-    };
+  data: () => ({
+    drawer: null
+  }),
+  props: {
+    source: String
   }
 };
 </script>
