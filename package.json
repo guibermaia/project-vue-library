@@ -1,5 +1,6 @@
 {
-  "name": "teste",
+  "name": "project-vue-library",
+  "author": "Guilherme Bertoldi",
   "version": "0.1.0",
   "private": true,
   "scripts": {

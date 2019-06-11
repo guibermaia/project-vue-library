@@ -5,9 +5,8 @@
       <router-link to="/about">About</router-link>|
     </div>
     <router-view/>
-    <v-footer class="pa-3">
-      <v-spacer></v-spacer>
-      <div>&copy; Rodapé {{ new Date().getFullYear() }}</div>
+    <v-footer class="pa-5">
+      <div>&copy; project-vue-library by Guilherme Bertoldi</div>
     </v-footer>
   </div>
 </template>
