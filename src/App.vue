@@ -15,14 +15,48 @@
         <v-divider></v-divider>
         <v-list-tile>
           <v-list-tile-action>
-            <v-icon>note_add</v-icon>
+            <v-icon>person</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>
-              <router-link to="/livro">Adicionar livro</router-link>
+              <router-link to="/list-author">Autores</router-link>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-divider></v-divider>
+        <v-list-tile>
+          <v-list-tile-action>
+            <v-icon>bookmark</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <router-link to="/list-publisher">Editoras</router-link>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-divider></v-divider>
+        <v-list-tile>
+          <v-list-tile-action>
+            <v-icon>library_books</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <router-link to="/list-book">Livros</router-link>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-divider></v-divider>
+        <v-list-tile>
+          <v-list-tile-action>
+            <v-icon>info</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <router-link to="/about">Sobre o projeto</router-link>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-divider></v-divider>
       </v-list>
       <v-footer color="indigo" app>
         <v-spacer></v-spacer>
@@ -42,8 +76,6 @@
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Biblioteca</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn to="/about" color="pink">SOBRE O PROJETO</v-btn>
     </v-toolbar>
     <v-content></v-content>
     <v-footer color="indigo" app>
@@ -55,7 +87,7 @@
 </template>
 
 <script>
-import CardLivros from "./components/CardLivros";
+import CardLivros from "./components/card/CardLivros";
 
 export default {
   name: "App",

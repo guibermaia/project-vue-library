@@ -49,8 +49,8 @@ export default {
     axios
       .get("https://testcloudmed.cloudmed.io/api/book?page=1")
       .then(res => {
-        console.log(res.data);
-        this.books = res.data;
+        console.log(res);
+        this.books = res.data.books;
         this.loading = false;
       })
       .catch(err => {
@@ -59,8 +59,8 @@ export default {
     axios
       .get("https://testcloudmed.cloudmed.io/api/publisher?page=1")
       .then(res => {
-        console.log(res.data);
-        this.publishers = res.data;
+        console.log(res);
+        this.publishers = res.data.publishers;
         this.loading = false;
       })
       .catch(err => {

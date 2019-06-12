@@ -22,9 +22,19 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
-      path: '/novo',
+      path: '/list-author',
+      name: 'autores',
+      component: () => import('./components/autores/list.vue')
+    },
+    {
+      path: '/list-publisher',
+      name: 'editoras',
+      component: () => import('./components/editoras/list.vue')
+    },
+    {
+      path: '/list-book',
       name: 'livros',
-      component: () => import('./components/CardLivros.vue')
+      component: () => import('./components/livros/list.vue')
     }
   ]
 })
