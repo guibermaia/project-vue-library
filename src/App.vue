@@ -30,24 +30,22 @@
         <v-spacer></v-spacer>
       </v-footer>
     </v-navigation-drawer>
+    <v-container fluid fill-height>
+      <v-layout justify-center align-center>
+        <v-flex text-xs-center>
+          <v-flex xs12 sm6 offset-sm3>
+            <router-view/>
+          </v-flex>
+        </v-flex>
+      </v-layout>
+    </v-container>
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Biblioteca</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn to="/about" color="pink">SOBRE O PROJETO</v-btn>
     </v-toolbar>
-    <v-content>
-      <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-          <v-flex text-xs-center>
-            <v-flex xs12 sm6 offset-sm3>
-              <CardLivros/>
-            </v-flex>
-          </v-flex>
-          <v-btn color="pink" dark medium absolute bottom right fab style="margin-bottom: 50px;">
-            <v-icon>note_add</v-icon>
-          </v-btn>
-        </v-layout>
-      </v-container>
-    </v-content>
+    <v-content></v-content>
     <v-footer color="indigo" app>
       <v-spacer></v-spacer>
       <span class="white--text">&copy; By Guilherme Bertoldi 2019</span>

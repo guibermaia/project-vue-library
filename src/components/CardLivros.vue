@@ -14,7 +14,7 @@
             <div>Numero de páginas: {{ item.pageNumber }}</div>
           </v-card-title>
           <v-card-actions class="justify-center">
-            <v-btn flat color="green" @click="singleMovie(item.imdbID)">View</v-btn>
+            <v-btn flat color="green">VISUALIZAR LIVRO</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -28,7 +28,7 @@
             <div>Numero de páginas: {{ item.pageNumber }}</div>
           </v-card-title>
           <v-card-actions class="justify-center">
-            <v-btn flat color="green" @click="singleMovie(item.imdbID)">View</v-btn>
+            <v-btn flat color="green">VISUALIZAR EDITORA</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
