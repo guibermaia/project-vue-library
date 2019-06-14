@@ -100,31 +100,17 @@ export default {
       { text: "Livros", value: "Livros" },
       { text: "", value: null }
     ],
-    desserts: [],
     publishers: [],
-    editedPublisher: {},
-    defaultItem: {
-      author: "",
-      id: 0,
-      id_Author: 0,
-      id_Publisher: 0,
-      pageNumber: 0,
-      publisher: "",
-      tittle: ""
-    }
+    editedPublisher: {}
   }),
+
   mounted() {
     this.getPublishers();
   },
+
   computed: {
     formTitle() {
       return this.editedPublisher.id ? "Editar Editora" : "Cadastrar Editora";
-    }
-  },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
     }
   },
 
@@ -133,7 +119,6 @@ export default {
       axios
         .get("https://testcloudmed.cloudmed.io/api/publisher?page=1")
         .then(res => {
-          console.log(res);
           this.publishers = res.data.publishers;
           console.log("this.publishers", this.publishers);
         })
@@ -148,7 +133,6 @@ export default {
           name: this.editedPublisher.name
         })
         .then(res => {
-          console.log(res);
           this.getPublishers();
         })
         .catch(err => {
@@ -163,7 +147,6 @@ export default {
           name: this.editedPublisher.name
         })
         .then(res => {
-          console.log(res);
           this.getPublishers();
         })
         .catch(err => {
@@ -178,7 +161,6 @@ export default {
             this.editedPublisher.id
         )
         .then(res => {
-          console.log(res);
           console.log(
             "id da editora que vai ser deletado",
             this.editedPublisher.id

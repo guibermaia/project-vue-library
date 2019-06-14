@@ -1,12 +1,12 @@
 <template>
   <div>
     <v-toolbar color="white">
-      <v-toolbar-title>EDITORAS</v-toolbar-title>
+      <v-toolbar-title>AUTORES</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-data-table
       :headers="headers"
-      :items="publishers"
+      :items="authors"
       :rows-per-page-items="[5]"
       class="elevation-2"
     >
@@ -14,12 +14,12 @@
         <td class="text-xs-left">{{ props.item.name }}</td>
         <td class="text-xs-left">{{ props.item.book }}</td>
         <td class="justify-center layout">
-          <v-icon small class="mr-2" @click="dialogEditPublisher(props.item)">edit</v-icon>
-          <v-icon small @click="dialogDeletePublisher(props.item)">delete</v-icon>
+          <v-icon small class="mr-2" @click="dialogEditAuthor(props.item)">edit</v-icon>
+          <v-icon small @click="dialogDeleteAuthor(props.item)">delete</v-icon>
         </td>
       </template>
       <template v-slot:no-data>
-        <h3>Nenhuma Editora cadastrada</h3>
+        <h3>Nenhum autor cadastrado</h3>
       </template>
     </v-data-table>
     <template>
@@ -35,16 +35,15 @@
                 <v-form>
                   <v-layout wrap>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedPublisher.name" label="Título"></v-text-field>
+                      <v-text-field v-model="editedAuthor.name" label="Título"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedPublisher.book" label="Livro"></v-text-field>
+                      <v-text-field v-model="editedAuthor.book" label="Livro"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-form>
               </v-container>
             </v-card-text>
-            {{editedPublisher}}
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" flat @click="close">CANCELAR</v-btn>
@@ -52,21 +51,22 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <!-- Modal delete -->
         <v-dialog v-model="dialogDelete" width="500">
           <v-card>
             <v-card-title
               class="headline grey lighten-2"
               primary-title
-            >Deletar Editora: "{{this.editedPublisher.name}}"</v-card-title>
+            >Deletar Autor: "{{this.editedAuthor.name}}"</v-card-title>
 
             <v-card-text>
-              <h3>Editora: "{{this.editedPublisher.name}}" será deletada, clique no botão "confirmar" para continuar</h3>
+              <h3>Autor: "{{this.editedAuthor.name}}" será deletado, clique no botão "confirmar" para continuar</h3>
             </v-card-text>
 
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="primary" flat @click="dialogDelete = false">CANCELAR</v-btn>
-              <v-btn color="primary" flat @click="deletePublisher()">CONFIRMAR</v-btn>
+              <v-btn color="primary" flat @click="deleteAuthor()">CONFIRMAR</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -100,128 +100,105 @@ export default {
       { text: "Livros", value: "Livros" },
       { text: "", value: null }
     ],
-    desserts: [],
-    publishers: [],
-    editedPublisher: {},
-    defaultItem: {
-      author: "",
-      id: 0,
-      id_Author: 0,
-      id_Publisher: 0,
-      pageNumber: 0,
-      publisher: "",
-      tittle: ""
-    }
+    authors: [],
+    editedAuthor: {}
   }),
   mounted() {
-    this.getPublishers();
+    this.getAuthors();
   },
   computed: {
     formTitle() {
-      return this.editedPublisher.id ? "Editar Editora" : "Cadastrar Editora";
-    }
-  },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
+      return this.editedAuthor.id ? "Editar Autor" : "Cadastrar Autor";
     }
   },
 
   methods: {
-    getPublishers() {
+    getAuthors() {
       axios
-        .get("https://testcloudmed.cloudmed.io/api/publisher")
+        .get("https://testcloudmed.cloudmed.io/api/author")
         .then(res => {
-          console.log(res);
-          this.publishers = res.data.publishers;
-          console.log("this.publishers", this.publishers);
+          this.authors = res.data.authors;
+          console.log("this.authors", this.authors);
         })
         .catch(err => {
           console.error(err);
         });
     },
 
-    postPublisher() {
+    postAuthor() {
       axios
-        .post("https://testcloudmed.cloudmed.io/api/publisher", {
-          name: this.editedPublisher.name
+        .post("https://testcloudmed.cloudmed.io/api/author", {
+          name: this.editedAuthor.name
         })
         .then(res => {
-          console.log(res);
-          this.getPublishers();
+          this.getAuthors();
         })
         .catch(err => {
           console.error(err);
         });
     },
 
-    putPublisher() {
+    putAuthor() {
       axios
-        .put("https://testcloudmed.cloudmed.io/api/publisher", {
-          id: this.editedPublisher.id,
-          name: this.editedPublisher.name
+        .put("https://testcloudmed.cloudmed.io/api/author", {
+          id: this.editedAuthor.id,
+          name: this.editedAuthor.name
         })
         .then(res => {
-          console.log(res);
-          this.getPublishers();
+          this.getAuthors();
         })
         .catch(err => {
           console.error(err);
         });
     },
 
-    deletePublisher() {
+    deleteAuthor() {
       axios
         .delete(
-          "https://testcloudmed.cloudmed.io/api/publisher?id=" +
-            this.editedPublisher.id
+          "https://testcloudmed.cloudmed.io/api/author?id=" +
+            this.editedAuthor.id
         )
         .then(res => {
-          console.log(res);
           console.log(
             "id da editora que vai ser deletado",
-            this.editedPublisher.id
+            this.editedAuthor.id
           );
-          this.getPublishers();
+          this.getAuthors();
         })
         .catch(err => {
           console.log(
             "id da editora que vai ser deletado",
-            this.editedPublisher.id
+            this.editedAuthor.id
           );
           console.error(err);
         });
     },
 
-    dialogEditPublisher(item) {
+    dialogEditAuthor(item) {
       console.log("item", item);
-      this.editedPublisher = Object.assign({}, item);
+      this.editedAuthor = Object.assign({}, item);
       this.dialog = true;
     },
 
-    dialogDeletePublisher(item) {
-      this.editedPublisher = Object.assign({}, item);
+    dialogDeleteAuthor(item) {
+      this.editedAuthor = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     close() {
       this.dialog = false;
       setTimeout(() => {
-        this.editedPublisher = {};
+        this.editedAuthor = {};
       }, 100);
     },
 
     save() {
-      // if se conter id ent é editar, se não é cadastro
-      if (this.editedPublisher.id) {
-        console.log("if");
-        this.putPublisher();
-        this.editedPublisher = {};
+      if (this.editedAuthor.id) {
+        this.putAuthor();
+        this.editedAuthor = {};
       } else {
-        console.log("else");
-        this.postPublisher();
-        this.editedPublisher = {};
+        this.postAuthor();
+        this.editedAuthor = {};
       }
       this.close();
     }

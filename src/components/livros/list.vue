@@ -11,8 +11,8 @@
         <td class="text-xs-left">{{ props.item.pageNumber }}</td>
         <td class="text-xs-left">{{ props.item.publisher }}</td>
         <td class="justify-center layout">
-          <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-          <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+          <v-icon small class="mr-2" @click="dialogEditBook(props.item)">edit</v-icon>
+          <v-icon small @click="dialogDeleteBook(props.item)">delete</v-icon>
         </td>
       </template>
       <template v-slot:no-data>
@@ -21,14 +21,15 @@
     </v-data-table>
     <template>
       <div class="text-xs-center">
-        <v-dialog v-model="dialog" max-width="1200px">
+        <!-- Modal cadastro/edição -->
+        <v-dialog v-model="dialog" max-width="900px">
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
             <v-card-text>
               <v-container grid-list-md>
-                <v-form v-model="valid">
+                <v-form>
                   <v-layout wrap>
                     <v-flex xs12 sm6 md4>
                       <v-text-field v-model="editedBook.tittle" label="Título"></v-text-field>
@@ -37,13 +38,23 @@
                       <v-text-field v-model="editedBook.pageNumber" label="Número de páginas"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.id_Author" label="Id do autor"></v-text-field>
+                      <v-select
+                        :items="idsAuthors"
+                        :no-data-text="'Nenhum id author encontrado'"
+                        label="Id autor"
+                        v-model="editedBook.id_Author"
+                      ></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field v-model="editedBook.author" label="Nome do autor"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.id_Publisher" label="Id editora"></v-text-field>
+                      <v-select
+                        :items="idsPublishers"
+                        :no-data-text="'Nenhum id editora encontrado'"
+                        label="Id editora"
+                        v-model="editedBook.id_Publisher"
+                      ></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-text-field v-model="editedBook.publisher" label="Nome da editora"></v-text-field>
@@ -60,7 +71,25 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        {{editedBook}}
+        <!-- Modal delete -->
+        <v-dialog v-model="dialogDelete" width="500">
+          <v-card>
+            <v-card-title
+              class="headline grey lighten-2"
+              primary-title
+            >Deletar Livro: "{{this.editedBook.tittle}}"</v-card-title>
+
+            <v-card-text>
+              <h3>Livro: "{{this.editedBook.tittle}}" será deletada, clique no botão "confirmar" para continuar</h3>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" flat @click="dialogDelete = false">CANCELAR</v-btn>
+              <v-btn color="primary" flat @click="deletePublisher()">CONFIRMAR</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <template>
           <v-btn
             absolute
@@ -70,7 +99,7 @@
             right
             color="pink"
             style="z-index: 4; margin-bottom: 70px;"
-            @click.stop="dialog = true"
+            @click="dialog = true"
           >
             <v-icon>add</v-icon>
           </v-btn>
@@ -85,7 +114,7 @@ import axios from "axios";
 export default {
   data: () => ({
     dialog: false,
-    valid: false,
+    dialogDelete: false,
     headers: [
       { text: "Título", value: "Título" },
       { text: "Autor", value: "Nome do autor" },
@@ -93,63 +122,30 @@ export default {
       { text: "Editora", value: "Editora" },
       { text: "", value: null }
     ],
-    desserts: [],
-    editedIndex: -1,
+    idsAuthors: [],
+    idsPublishers: [],
     books: [],
-    editedBook: {},
-    defaultItem: {
-      author: "",
-      id: 0,
-      id_Author: 0,
-      id_Publisher: 0,
-      pageNumber: 0,
-      publisher: "",
-      tittle: ""
-    }
+    editedBook: {}
   }),
   mounted() {
     this.getBooks();
-    this.getPublishers();
   },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Cadastrar livro" : "Editar livro";
+      return this.editedBook.id ? "Editar Livro" : "Cadastrar Livro";
     }
-  },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    }
-  },
-
-  created() {
-    this.initialize();
   },
 
   methods: {
-    initialize() {
-      this.dados = [];
-    },
-
     getBooks() {
       axios
         .get("https://testcloudmed.cloudmed.io/api/book")
         .then(res => {
-          console.log(res);
           this.books = res.data.books;
-          this.loading = false;
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
-
-    getPublishers() {
-      axios
-        .get("https://testcloudmed.cloudmed.io/api/publisher")
-        .then(res => {
-          console.log(res);
+          this.books.forEach(e => {
+            this.idsAuthors.push(e.id_Author);
+            this.idsPublishers.push(e.id_Publisher);
+          });
         })
         .catch(err => {
           console.error(err);
@@ -159,51 +155,66 @@ export default {
     postBook() {
       axios
         .post("https://testcloudmed.cloudmed.io/api/book", {
-          tittle: this.editedBook.tittle,
-          id_Author: this.editedBook.id_Author,
-          id_Publisher: this.editedBook.id_Publisher,
-          pageNumber: this.editedBook.pageNumber
+          name: this.editedBook.name
         })
         .then(res => {
-          console.log(res);
+          this.getBooks();
         })
         .catch(err => {
           console.error(err);
         });
     },
 
-    editItem(item) {
-      console.log("item", item);
-      this.editedIndex = this.books.indexOf(item);
-      this.books.slice(this.editedIndex, 1);
+    putBook() {
+      axios
+        .put("https://testcloudmed.cloudmed.io/api/book", {
+          id: this.editedBook.id,
+          name: this.editedBook.name
+        })
+        .then(res => {
+          this.getBooks();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+
+    deletePublisher() {
+      axios
+        .delete(
+          "https://testcloudmed.cloudmed.io/api/book?id=" + this.editedBook.id
+        )
+        .then(res => {
+          this.getBooks();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+
+    dialogEditBook(item) {
       this.editedBook = Object.assign({}, item);
       this.dialog = true;
     },
 
-    deleteItem(item) {
-      const index = this.books.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.desserts.splice(index, 1);
+    dialogDeleteBook(item) {
+      this.editedBook = Object.assign({}, item);
+      this.dialogDelete = true;
     },
 
     close() {
       this.dialog = false;
       setTimeout(() => {
-        // this.books = Object.assign({}, this.defaultItem);
-        // this.books.push(this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
+        this.editedBook = {};
+      }, 100);
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        console.log("if");
-        Object.assign(this.books[this.editedIndex], this.editedBook);
+      if (this.editedBook.id) {
+        this.putBook();
         this.editedBook = {};
       } else {
-        console.log("else");
         this.postBook();
-        this.getBooks();
         this.editedBook = {};
       }
       this.close();
