@@ -1,65 +1,72 @@
 <template>
   <div>
     <v-toolbar color="white">
-      <v-toolbar-title>AUTORES</v-toolbar-title>
+      <v-toolbar-title>EDITORAS</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="desserts" class="elevation-2">
+    <v-data-table
+      :headers="headers"
+      :items="publishers"
+      :rows-per-page-items="[5]"
+      class="elevation-2"
+    >
       <template v-slot:items="props">
-        <tr>
-          <td class="text-xs-left">{{ props.item.titulo }}</td>
-          <td class="text-xs-left">{{ props.item.nomeAutor }}</td>
-          <td class="text-xs-left">{{ props.item.numeroPaginas }}</td>
-          <td class="text-xs-left">{{ props.item.nomeEditora }}</td>
-          <td class="justify-center layout">
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
-          </td>
-        </tr>
+        <td class="text-xs-left">{{ props.item.name }}</td>
+        <td class="text-xs-left">{{ props.item.book }}</td>
+        <td class="justify-center layout">
+          <v-icon small class="mr-2" @click="dialogEditPublisher(props.item)">edit</v-icon>
+          <v-icon small @click="dialogDeletePublisher(props.item)">delete</v-icon>
+        </td>
       </template>
       <template v-slot:no-data>
-        <h3>Nenhum livro cadastrado</h3>
+        <h3>Nenhuma Editora cadastrada</h3>
       </template>
     </v-data-table>
     <template>
       <div class="text-xs-center">
-        <v-dialog v-model="dialog" max-width="1200px">
+        <!-- Modal cadastro/edição -->
+        <v-dialog v-model="dialog" max-width="500px">
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
             <v-card-text>
               <v-container grid-list-md>
-                <v-layout wrap>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedBook.id" label="Id"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedBook.titulo" label="Título"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedBook.numeroPaginas" label="Número de páginas   "></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedBook.idAutor" label="Id do autor"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedBook.nomeAutor" label="Nome do autor"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedBook.idEditora" label="Id editora"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedBook.nomeEditora" label="Nome da editora"></v-text-field>
-                  </v-flex>
-                </v-layout>
+                <v-form>
+                  <v-layout wrap>
+                    <v-flex xs12 sm6 md4>
+                      <v-text-field v-model="editedPublisher.name" label="Título"></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md4>
+                      <v-text-field v-model="editedPublisher.book" label="Livro"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-form>
               </v-container>
             </v-card-text>
-            {{editedBook}}
+            {{editedPublisher}}
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
+              <v-btn color="blue darken-1" flat @click="close">CANCELAR</v-btn>
+              <v-btn color="blue darken-1" flat @click="save">SALVAR</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" width="500">
+          <v-card>
+            <v-card-title
+              class="headline grey lighten-2"
+              primary-title
+            >Deletar Editora: "{{this.editedPublisher.name}}"</v-card-title>
+
+            <v-card-text>
+              <h3>Editora: "{{this.editedPublisher.name}}" será deletada, clique no botão "confirmar" para continuar</h3>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" flat @click="dialogDelete = false">CANCELAR</v-btn>
+              <v-btn color="primary" flat @click="deletePublisher()">CONFIRMAR</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -72,7 +79,7 @@
             right
             color="pink"
             style="z-index: 4; margin-bottom: 70px;"
-            @click.stop="dialog = true"
+            @click="dialog = true"
           >
             <v-icon>add</v-icon>
           </v-btn>
@@ -83,41 +90,35 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: () => ({
     dialog: false,
+    dialogDelete: false,
     headers: [
-      { text: "Título", value: "Título" },
-      { text: "Nome do autor", value: "Nome do autor" },
-      { text: "Número de páginas", value: "Número de páginas" },
-      { text: "Editora", value: "Editora" },
+      { text: "Nome do Livro", value: "Nome do Livro" },
+      { text: "Livros", value: "Livros" },
       { text: "", value: null }
     ],
     desserts: [],
-    editedIndex: -1,
-    editedBook: {
-      id: "",
-      titulo: "",
-      numeroPaginas: "",
-      idAutor: "",
-      nomeAutor: "",
-      idEditora: "",
-      nomeEditora: ""
-    },
+    publishers: [],
+    editedPublisher: {},
     defaultItem: {
-      id: "",
-      titulo: "",
-      numeroPaginas: "",
-      idAutor: "",
-      nomeAutor: "",
-      idEditora: "",
-      nomeEditora: ""
+      author: "",
+      id: 0,
+      id_Author: 0,
+      id_Publisher: 0,
+      pageNumber: 0,
+      publisher: "",
+      tittle: ""
     }
   }),
-
+  mounted() {
+    this.getPublishers();
+  },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Cadastrar livro" : "Editar livro";
+      return this.editedPublisher.id ? "Editar Editora" : "Cadastrar Editora";
     }
   },
 
@@ -127,40 +128,100 @@ export default {
     }
   },
 
-  created() {
-    this.initialize();
-  },
-
   methods: {
-    initialize() {
-      this.dados = [];
+    getPublishers() {
+      axios
+        .get("https://testcloudmed.cloudmed.io/api/publisher")
+        .then(res => {
+          console.log(res);
+          this.publishers = res.data.publishers;
+          console.log("this.publishers", this.publishers);
+        })
+        .catch(err => {
+          console.error(err);
+        });
     },
 
-    editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
-      this.editedBook = Object.assign({}, item);
+    postPublisher() {
+      axios
+        .post("https://testcloudmed.cloudmed.io/api/publisher", {
+          name: this.editedPublisher.name
+        })
+        .then(res => {
+          console.log(res);
+          this.getPublishers();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+
+    putPublisher() {
+      axios
+        .put("https://testcloudmed.cloudmed.io/api/publisher", {
+          id: this.editedPublisher.id,
+          name: this.editedPublisher.name
+        })
+        .then(res => {
+          console.log(res);
+          this.getPublishers();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+
+    deletePublisher() {
+      axios
+        .delete(
+          "https://testcloudmed.cloudmed.io/api/publisher?id=" +
+            this.editedPublisher.id
+        )
+        .then(res => {
+          console.log(res);
+          console.log(
+            "id da editora que vai ser deletado",
+            this.editedPublisher.id
+          );
+          this.getPublishers();
+        })
+        .catch(err => {
+          console.log(
+            "id da editora que vai ser deletado",
+            this.editedPublisher.id
+          );
+          console.error(err);
+        });
+    },
+
+    dialogEditPublisher(item) {
+      console.log("item", item);
+      this.editedPublisher = Object.assign({}, item);
       this.dialog = true;
     },
 
-    deleteItem(item) {
-      const index = this.desserts.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.desserts.splice(index, 1);
+    dialogDeletePublisher(item) {
+      this.editedPublisher = Object.assign({}, item);
+      this.dialogDelete = true;
     },
 
     close() {
       this.dialog = false;
       setTimeout(() => {
-        this.editedBook = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
+        this.editedPublisher = {};
+      }, 100);
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedBook);
+      // if se conter id ent é editar, se não é cadastro
+      if (this.editedPublisher.id) {
+        console.log("if");
+        this.putPublisher();
+        this.editedPublisher = {};
       } else {
-        this.desserts.push(this.editedBook);
+        console.log("else");
+        this.postPublisher();
+        this.editedPublisher = {};
       }
       this.close();
     }

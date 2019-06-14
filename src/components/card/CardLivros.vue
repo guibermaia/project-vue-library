@@ -5,6 +5,9 @@
     </div>
   </v-container>
   <v-container v-else grid-list-xl>
+    <v-divider></v-divider>
+    <h1>LIVROS</h1>
+    <v-divider></v-divider>
     <v-layout wrap>
       <v-flex xs5 v-for="(item, index) in books" :key="index" mb-2>
         <v-card>
@@ -19,6 +22,9 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <v-divider></v-divider>
+    <h1>EDITORAS</h1>
+    <v-divider></v-divider>
     <v-layout wrap>
       <v-flex xs5 v-for="(item, index) in publishers" :key="index" mb-2>
         <v-card>
@@ -45,27 +51,35 @@ export default {
       loading: true
     };
   },
+  methods: {
+    getBooks() {
+      axios
+        .get("https://testcloudmed.cloudmed.io/api/book?page=1")
+        .then(res => {
+          console.log(res);
+          this.books = res.data.books;
+          this.loading = false;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    getPublishers() {
+      axios
+        .get("https://testcloudmed.cloudmed.io/api/publisher?page=1")
+        .then(res => {
+          console.log(res);
+          this.publishers = res.data.publishers;
+          this.loading = false;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+  },
   mounted() {
-    axios
-      .get("https://testcloudmed.cloudmed.io/api/book?page=1")
-      .then(res => {
-        console.log(res);
-        this.books = res.data.books;
-        this.loading = false;
-      })
-      .catch(err => {
-        console.error(err);
-      });
-    axios
-      .get("https://testcloudmed.cloudmed.io/api/publisher?page=1")
-      .then(res => {
-        console.log(res);
-        this.publishers = res.data.publishers;
-        this.loading = false;
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    this.getBooks();
+    this.getPublishers();
   }
 };
 </script>
