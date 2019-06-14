@@ -7,12 +7,17 @@
   <v-container v-else grid-list-xl text-xs-center>
     <v-dialog v-model="dialog" width="500">
       <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>Livro: {{}}</v-card-title>
+        <v-card-title
+          class="headline grey lighten-2"
+          primary-title
+        >Livro: {{this.bookDetails.tittle}}</v-card-title>
 
         <v-card-text>
-          <div>
-            <!-- <div>Titulo: {{ item.tittle }}</div>
-            <div>Numero de páginas: {{ item.pageNumber }}</div> -->
+          <div class="headline mb-3">
+            <div>Titulo: {{ this.bookDetails.tittle }}</div>
+            <div>Numero de páginas: {{ this.bookDetails.pageNumber }}</div>
+            <div>Autor: {{ this.bookDetails.author }}</div>
+            <div>Editor: {{ this.bookDetails.publisher }}</div>
           </div>
         </v-card-text>
 
@@ -20,7 +25,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click="dialog = false">I accept</v-btn>
+          <v-btn color="primary" flat @click="dialog = false">FECHAR</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -35,7 +40,7 @@
             <div>Numero de páginas: {{ item.pageNumber }}</div>
           </v-card-title>
           <v-card-actions class="justify-center">
-            <v-btn flat color="green">VISUALIZAR</v-btn>
+            <v-btn flat color="green" @click="getDetailsBook(item)">VISUALIZAR</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -48,7 +53,7 @@ export default {
   data() {
     return {
       books: [],
-      publishers: [],
+      bookDetails: {},
       loading: true,
       dialog: false
     };
@@ -56,13 +61,12 @@ export default {
 
   mounted() {
     this.getBooks();
-    this.getPublishers();
   },
 
   methods: {
     getBooks() {
       axios
-        .get("https://testcloudmed.cloudmed.io/api/book?page=1")
+        .get("https://testcloudmed.cloudmed.io/api/book")
         .then(res => {
           this.books = res.data.books;
           this.loading = false;
@@ -71,17 +75,12 @@ export default {
           console.error(err);
         });
     },
-    
-    getPublishers() {
-      axios
-        .get("https://testcloudmed.cloudmed.io/api/publisher?page=1")
-        .then(res => {
-          this.publishers = res.data.publishers;
-          this.loading = false;
-        })
-        .catch(err => {
-          console.error(err);
-        });
+
+    getDetailsBook(item) {
+      console.log("item:", item);
+      this.bookDetails = Object.assign({}, item);
+      console.log("Object.assign({}, item);", this.bookDetails);
+      this.dialog = true;
     }
   }
 };

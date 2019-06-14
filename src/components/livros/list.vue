@@ -20,6 +20,21 @@
       </template>
     </v-data-table>
     <template>
+      <v-card>
+        <v-snackbar
+          v-model="snackbar"
+          :bottom="y === 'bottom'"
+          :left="x === 'left'"
+          :multi-line="mode === 'multi-line'"
+          :timeout="timeout"
+          :vertical="mode === 'vertical'"
+        >
+          {{ textMessageSnack }}
+          <v-btn color="pink" flat @click="snackbar = false">FECHAR</v-btn>
+        </v-snackbar>
+      </v-card>
+    </template>
+    <template>
       <div class="text-xs-center">
         <!-- Modal cadastro/edição -->
         <v-dialog v-model="dialog" max-width="900px">
@@ -63,7 +78,6 @@
                 </v-form>
               </v-container>
             </v-card-text>
-            {{editedBook}}
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" flat @click="close">CANCELAR</v-btn>
@@ -125,7 +139,13 @@ export default {
     idsAuthors: [],
     idsPublishers: [],
     books: [],
-    editedBook: {}
+    editedBook: {},
+    snackbar: false,
+    y: "bottom",
+    x: "left",
+    mode: "",
+    timeout: 7000,
+    textMessageSnack: ""
   }),
   mounted() {
     this.getBooks();
@@ -149,19 +169,28 @@ export default {
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível listar os livros no momento, por favor tente novamente mais tarde!";
         });
     },
 
     postBook() {
       axios
         .post("https://testcloudmed.cloudmed.io/api/book", {
-          name: this.editedBook.name
+          tittle: this.editedBook.tittle,
+          pageNumber: this.editedBook.pageNumber,
+          id_Author: this.editedBook.id_Author,
+          id_Publisher: this.editedBook.id_Publisher
         })
-        .then(res => {
+        .then(() => {
           this.getBooks();
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível cadastrar este livro no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -169,13 +198,16 @@ export default {
       axios
         .put("https://testcloudmed.cloudmed.io/api/book", {
           id: this.editedBook.id,
-          name: this.editedBook.name
+          tittle: this.editedBook.tittle
         })
-        .then(res => {
+        .then(() => {
           this.getBooks();
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível editar este livro no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -184,11 +216,16 @@ export default {
         .delete(
           "https://testcloudmed.cloudmed.io/api/book?id=" + this.editedBook.id
         )
-        .then(res => {
+        .then(() => {
           this.getBooks();
+          this.dialogDelete = false;
         })
         .catch(err => {
           console.error(err);
+          this.dialogDelete = false;
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível editar este livro no momento, por favor tente novamente mais tarde!";
         });
     },
 

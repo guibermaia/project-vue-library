@@ -23,6 +23,21 @@
       </template>
     </v-data-table>
     <template>
+      <v-card>
+        <v-snackbar
+          v-model="snackbar"
+          :bottom="y === 'bottom'"
+          :left="x === 'left'"
+          :multi-line="mode === 'multi-line'"
+          :timeout="timeout"
+          :vertical="mode === 'vertical'"
+        >
+          {{ textMessageSnack }}
+          <v-btn color="pink" flat @click="snackbar = false">FECHAR</v-btn>
+        </v-snackbar>
+      </v-card>
+    </template>
+    <template>
       <div class="text-xs-center">
         <!-- Modal cadastro/edição -->
         <v-dialog v-model="dialog" max-width="500px">
@@ -44,7 +59,6 @@
                 </v-form>
               </v-container>
             </v-card-text>
-            {{editedPublisher}}
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" flat @click="close">CANCELAR</v-btn>
@@ -101,7 +115,13 @@ export default {
       { text: "", value: null }
     ],
     publishers: [],
-    editedPublisher: {}
+    editedPublisher: {},
+    snackbar: true,
+    y: "bottom",
+    x: "left",
+    mode: "",
+    timeout: 7000,
+    textMessageSnack: ""
   }),
 
   mounted() {
@@ -117,13 +137,15 @@ export default {
   methods: {
     getPublishers() {
       axios
-        .get("https://testcloudmed.cloudmed.io/api/publisher?page=1")
+        .get("https://testcloudmed.cloudmed.io/api/publisher")
         .then(res => {
           this.publishers = res.data.publishers;
-          console.log("this.publishers", this.publishers);
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível listar as editoras no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -132,11 +154,14 @@ export default {
         .post("https://testcloudmed.cloudmed.io/api/publisher", {
           name: this.editedPublisher.name
         })
-        .then(res => {
+        .then(() => {
           this.getPublishers();
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível cadastrar esta editora no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -146,11 +171,14 @@ export default {
           id: this.editedPublisher.id,
           name: this.editedPublisher.name
         })
-        .then(res => {
+        .then(() => {
           this.getPublishers();
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível editar esta editora no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -160,24 +188,19 @@ export default {
           "https://testcloudmed.cloudmed.io/api/publisher?id=" +
             this.editedPublisher.id
         )
-        .then(res => {
-          console.log(
-            "id da editora que vai ser deletado",
-            this.editedPublisher.id
-          );
+        .then(() => {
           this.getPublishers();
         })
         .catch(err => {
-          console.log(
-            "id da editora que vai ser deletado",
-            this.editedPublisher.id
-          );
           console.error(err);
+          this.dialogDelete = false;
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível editar esta editora no momento, por favor tente novamente mais tarde!";
         });
     },
 
     dialogEditPublisher(item) {
-      console.log("item", item);
       this.editedPublisher = Object.assign({}, item);
       this.dialog = true;
     },
@@ -195,13 +218,10 @@ export default {
     },
 
     save() {
-      // if se conter id ent é editar, se não é cadastro
       if (this.editedPublisher.id) {
-        console.log("if");
         this.putPublisher();
         this.editedPublisher = {};
       } else {
-        console.log("else");
         this.postPublisher();
         this.editedPublisher = {};
       }

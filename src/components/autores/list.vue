@@ -23,6 +23,21 @@
       </template>
     </v-data-table>
     <template>
+      <v-card>
+        <v-snackbar
+          v-model="snackbar"
+          :bottom="y === 'bottom'"
+          :left="x === 'left'"
+          :multi-line="mode === 'multi-line'"
+          :timeout="timeout"
+          :vertical="mode === 'vertical'"
+        >
+          {{ textMessageSnack }}
+          <v-btn color="pink" flat @click="snackbar = false">FECHAR</v-btn>
+        </v-snackbar>
+      </v-card>
+    </template>
+    <template>
       <div class="text-xs-center">
         <!-- Modal cadastro/edição -->
         <v-dialog v-model="dialog" max-width="500px">
@@ -101,7 +116,13 @@ export default {
       { text: "", value: null }
     ],
     authors: [],
-    editedAuthor: {}
+    editedAuthor: {},
+    snackbar: false,
+    y: "bottom",
+    x: "left",
+    mode: "",
+    timeout: 7000,
+    textMessageSnack: ""
   }),
   mounted() {
     this.getAuthors();
@@ -122,6 +143,9 @@ export default {
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível listar os autores no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -130,11 +154,14 @@ export default {
         .post("https://testcloudmed.cloudmed.io/api/author", {
           name: this.editedAuthor.name
         })
-        .then(res => {
+        .then(() => {
           this.getAuthors();
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível cadastrar este autor no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -144,11 +171,14 @@ export default {
           id: this.editedAuthor.id,
           name: this.editedAuthor.name
         })
-        .then(res => {
+        .then(() => {
           this.getAuthors();
         })
         .catch(err => {
           console.error(err);
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível editar este autor no momento, por favor tente novamente mais tarde!";
         });
     },
 
@@ -158,24 +188,20 @@ export default {
           "https://testcloudmed.cloudmed.io/api/author?id=" +
             this.editedAuthor.id
         )
-        .then(res => {
-          console.log(
-            "id da editora que vai ser deletado",
-            this.editedAuthor.id
-          );
+        .then(() => {
           this.getAuthors();
+          this.dialogDelete = false;
         })
         .catch(err => {
-          console.log(
-            "id da editora que vai ser deletado",
-            this.editedAuthor.id
-          );
           console.error(err);
+          this.dialogDelete = false;
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível editar este autor no momento, por favor tente novamente mais tarde!";
         });
     },
 
     dialogEditAuthor(item) {
-      console.log("item", item);
       this.editedAuthor = Object.assign({}, item);
       this.dialog = true;
     },
