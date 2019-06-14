@@ -87,13 +87,10 @@
 </template>
 
 <script>
-import CardLivros from "./components/card/CardLivros";
 
 export default {
   name: "App",
-  components: {
-    CardLivros
-  },
+  components: { },
   data: () => ({
     drawer: null
   }),

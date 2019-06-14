@@ -167,8 +167,7 @@ export default {
             this.idsPublishers.push(e.id_Publisher);
           });
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível listar os livros no momento, por favor tente novamente mais tarde!";
@@ -186,8 +185,7 @@ export default {
         .then(() => {
           this.getBooks();
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível cadastrar este livro no momento, por favor tente novamente mais tarde!";
@@ -203,8 +201,7 @@ export default {
         .then(() => {
           this.getBooks();
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível editar este livro no momento, por favor tente novamente mais tarde!";
@@ -220,8 +217,7 @@ export default {
           this.getBooks();
           this.dialogDelete = false;
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.dialogDelete = false;
           this.snackbar = true;
           this.textMessageSnack =

@@ -116,7 +116,7 @@ export default {
     ],
     publishers: [],
     editedPublisher: {},
-    snackbar: true,
+    snackbar: false,
     y: "bottom",
     x: "left",
     mode: "",
@@ -141,8 +141,7 @@ export default {
         .then(res => {
           this.publishers = res.data.publishers;
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível listar as editoras no momento, por favor tente novamente mais tarde!";
@@ -157,8 +156,7 @@ export default {
         .then(() => {
           this.getPublishers();
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível cadastrar esta editora no momento, por favor tente novamente mais tarde!";
@@ -174,8 +172,7 @@ export default {
         .then(() => {
           this.getPublishers();
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível editar esta editora no momento, por favor tente novamente mais tarde!";
@@ -191,8 +188,7 @@ export default {
         .then(() => {
           this.getPublishers();
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.dialogDelete = false;
           this.snackbar = true;
           this.textMessageSnack =

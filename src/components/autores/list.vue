@@ -139,10 +139,8 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/author")
         .then(res => {
           this.authors = res.data.authors;
-          console.log("this.authors", this.authors);
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível listar os autores no momento, por favor tente novamente mais tarde!";
@@ -157,8 +155,7 @@ export default {
         .then(() => {
           this.getAuthors();
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível cadastrar este autor no momento, por favor tente novamente mais tarde!";
@@ -174,8 +171,7 @@ export default {
         .then(() => {
           this.getAuthors();
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
             "Não foi possível editar este autor no momento, por favor tente novamente mais tarde!";
@@ -192,8 +188,7 @@ export default {
           this.getAuthors();
           this.dialogDelete = false;
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
           this.dialogDelete = false;
           this.snackbar = true;
           this.textMessageSnack =

@@ -5,6 +5,21 @@
     </div>
   </v-container>
   <v-container v-else grid-list-xl text-xs-center>
+    <template>
+      <v-card>
+        <v-snackbar
+          v-model="snackbar"
+          :bottom="y === 'bottom'"
+          :left="x === 'left'"
+          :multi-line="mode === 'multi-line'"
+          :timeout="timeout"
+          :vertical="mode === 'vertical'"
+        >
+          {{ textMessageSnack }}
+          <v-btn color="pink" flat @click="snackbar = false">FECHAR</v-btn>
+        </v-snackbar>
+      </v-card>
+    </template>
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title
@@ -55,7 +70,13 @@ export default {
       books: [],
       bookDetails: {},
       loading: true,
-      dialog: false
+      dialog: false,
+      snackbar: false,
+      y: "bottom",
+      x: "left",
+      mode: "",
+      timeout: 7000,
+      textMessageSnack: ""
     };
   },
 
@@ -71,15 +92,15 @@ export default {
           this.books = res.data.books;
           this.loading = false;
         })
-        .catch(err => {
-          console.error(err);
+        .catch(() => {
+          this.snackbar = true;
+          this.textMessageSnack =
+            "Não foi possível listar os livros no momento, por favor tente novamente mais tarde!";
         });
     },
 
     getDetailsBook(item) {
-      console.log("item:", item);
       this.bookDetails = Object.assign({}, item);
-      console.log("Object.assign({}, item);", this.bookDetails);
       this.dialog = true;
     }
   }
