@@ -7,9 +7,9 @@
     <v-data-table :headers="headers" :items="books" :rows-per-page-items="[5]" class="elevation-2">
       <template v-slot:items="props">
         <td class="text-xs-left">{{ props.item.tittle }}</td>
-        <td class="text-xs-left">{{ props.item.author }}</td>
+        <td class="text-xs-left">{{ props.item.author ? props.item.author.name : '---' }}</td>
         <td class="text-xs-left">{{ props.item.pageNumber }}</td>
-        <td class="text-xs-left">{{ props.item.publisher }}</td>
+        <td class="text-xs-left">{{ props.item.publisher ? props.item.publisher.name : '---' }}</td>
         <td class="justify-center layout">
           <v-icon small class="mr-2" @click="dialogEditBook(props.item)">edit</v-icon>
           <v-icon small @click="dialogDeleteBook(props.item)">delete</v-icon>
@@ -61,7 +61,7 @@
                       ></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.author" label="Nome do autor"></v-text-field>
+                      <v-text-field v-model="editedBook.author.name" v-if="editedBook.author.name !== null" label="Nome do autor"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-select
@@ -72,7 +72,7 @@
                       ></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.publisher" label="Nome da editora"></v-text-field>
+                      <v-text-field v-model="editedBook.publisher.name" v-if="editedBook.publisher.name !== null" label="Nome da editora"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -94,7 +94,7 @@
             >Deletar Livro: "{{this.editedBook.tittle}}"</v-card-title>
 
             <v-card-text>
-              <h3>Livro: "{{this.editedBook.tittle}}" será deletada, clique no botão "confirmar" para continuar</h3>
+              <h3>Livro: "{{this.editedBook.tittle}}" será deletado, clique no botão "confirmar" para continuar</h3>
             </v-card-text>
 
             <v-card-actions>
@@ -129,6 +129,7 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
+    name: "",
     headers: [
       { text: "Título", value: "Título" },
       { text: "Autor", value: "Nome do autor" },
@@ -162,9 +163,13 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/book")
         .then(res => {
           this.books = res.data.books;
+          console.log(this.books)
           this.books.forEach(e => {
             this.idsAuthors.push(e.id_Author);
             this.idsPublishers.push(e.id_Publisher);
+            this.editedBook.author.name.push(e.author.name)
+            this.editedBook.publisher.name.push(e.publisher.name)
+            console.log()
           });
         })
         .catch(() => {
@@ -255,9 +260,3 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-html,
-body {
-  overflow: hidden;
-}
-</style>

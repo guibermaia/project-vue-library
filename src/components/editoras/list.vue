@@ -12,7 +12,7 @@
     >
       <template v-slot:items="props">
         <td class="text-xs-left">{{ props.item.name }}</td>
-        <td class="text-xs-left">{{ props.item.book }}</td>
+        <td class="text-xs-left">{{ props.item.book ? props.item.book : '---' }}</td>
         <td class="justify-center layout">
           <v-icon small class="mr-2" @click="dialogEditPublisher(props.item)">edit</v-icon>
           <v-icon small @click="dialogDeletePublisher(props.item)">delete</v-icon>
@@ -22,6 +22,7 @@
         <h3>Nenhuma Editora cadastrada</h3>
       </template>
     </v-data-table>
+    <!-- SNACKBAR -->
     <template>
       <v-card>
         <v-snackbar
@@ -51,9 +52,7 @@
                   <v-layout wrap>
                     <v-flex xs12 sm6 md4>
                       <v-text-field v-model="editedPublisher.name" label="Título"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedPublisher.book" label="Livro"></v-text-field>
+                      <v-text-field v-model="editedPublisher.name" label="Título"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -140,6 +139,7 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/publisher")
         .then(res => {
           this.publishers = res.data.publishers;
+          console.log(this.publishers);
         })
         .catch(() => {
           this.snackbar = true;
@@ -187,12 +187,13 @@ export default {
         )
         .then(() => {
           this.getPublishers();
+          this.dialogDelete = false;
         })
         .catch(() => {
           this.dialogDelete = false;
           this.snackbar = true;
           this.textMessageSnack =
-            "Não foi possível editar esta editora no momento, por favor tente novamente mais tarde!";
+            "Não é possivel remover, editora relacionada a livros!";
         });
     },
 
@@ -226,9 +227,3 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-html,
-body {
-  overflow: hidden;
-}
-</style>

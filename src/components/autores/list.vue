@@ -12,7 +12,7 @@
     >
       <template v-slot:items="props">
         <td class="text-xs-left">{{ props.item.name }}</td>
-        <td class="text-xs-left">{{ props.item.book }}</td>
+        <td class="text-xs-left">{{ props.item.book ? props.item.book : '---' }}</td>
         <td class="justify-center layout">
           <v-icon small class="mr-2" @click="dialogEditAuthor(props.item)">edit</v-icon>
           <v-icon small @click="dialogDeleteAuthor(props.item)">delete</v-icon>
@@ -139,6 +139,7 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/author")
         .then(res => {
           this.authors = res.data.authors;
+          console.log(this.authors);
         })
         .catch(() => {
           this.snackbar = true;
@@ -174,7 +175,7 @@ export default {
         .catch(() => {
           this.snackbar = true;
           this.textMessageSnack =
-            "Não foi possível editar este autor no momento, por favor tente novamente mais tarde!";
+            "Não é possivel editar, autor relacionada a livros!";
         });
     },
 
@@ -188,11 +189,12 @@ export default {
           this.getAuthors();
           this.dialogDelete = false;
         })
-        .catch(() => {
+        .catch(res => {
           this.dialogDelete = false;
           this.snackbar = true;
+          console.log(res);
           this.textMessageSnack =
-            "Não foi possível editar este autor no momento, por favor tente novamente mais tarde!";
+            "Não é possivel remover, autor relacionada a livros!";
         });
     },
 
@@ -226,9 +228,3 @@ export default {
   }
 };
 </script>
-<style lang="scss">
-html,
-body {
-  overflow: hidden;
-}
-</style>

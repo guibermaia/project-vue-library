@@ -37,7 +37,7 @@
         <v-divider></v-divider>
         <v-list-tile>
           <v-list-tile-action>
-            <v-icon>library_books</v-icon>
+            <v-icon>import_contacts</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>
@@ -58,11 +58,7 @@
         </v-list-tile>
         <v-divider></v-divider>
       </v-list>
-      <v-footer color="indigo" app>
-        <v-spacer></v-spacer>
-        <span class="white--text">&copy; By Guilherme Bertoldi 2019</span>
-        <v-spacer></v-spacer>
-      </v-footer>
+
     </v-navigation-drawer>
     <v-container fluid fill-height>
       <v-layout justify-center align-center>
