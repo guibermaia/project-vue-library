@@ -23,17 +23,17 @@ export default new VueRouter({
         {
             path: '/list-author',
             name: 'autores',
-            component: () => import('../components/autores/List.vue')
+            component: () => import('../components/autores/list.vue')
         },
         {
             path: '/list-publisher',
             name: 'editoras',
-            component: () => import('../components/editoras/List.vue')
+            component: () => import('../components/editoras/list.vue')
         },
         {
             path: '/list-book',
             name: 'livros',
-            component: () => import('../components/livros/List.vue')
+            component: () => import('../components/livros/list.vue')
         }
     ],
     mode: 'history'

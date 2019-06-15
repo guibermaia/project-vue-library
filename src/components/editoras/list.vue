@@ -41,7 +41,7 @@
     <template>
       <div class="text-xs-center">
         <!-- Modal cadastro/edição -->
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="300px">
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -50,9 +50,8 @@
               <v-container grid-list-md>
                 <v-form>
                   <v-layout wrap>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedPublisher.name" label="Título"></v-text-field>
-                      <v-text-field v-model="editedPublisher.name" label="Título"></v-text-field>
+                    <v-flex xs12 sm6 md12>
+                      <v-text-field v-model="editedPublisher.name" label="Nome"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -139,7 +138,6 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/publisher")
         .then(res => {
           this.publishers = res.data.publishers;
-          console.log(this.publishers);
         })
         .catch(() => {
           this.snackbar = true;

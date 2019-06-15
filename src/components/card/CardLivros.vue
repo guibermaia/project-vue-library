@@ -20,7 +20,7 @@
         </v-snackbar>
       </v-card>
     </template>
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" width="450">
       <v-card>
         <v-card-title class="headline indigo lighten-1" primary-title>
           <v-icon left color="white">import_contacts</v-icon>
@@ -70,7 +70,7 @@
         <v-card>
           <v-card-title primary-title>
             <div>
-              <h3 class="overflow-tittle">Título: {{ item.tittle }}</h3>
+              <h3>Título: {{ item.tittle }}</h3>
             </div>
           </v-card-title>
           <div>
@@ -122,7 +122,6 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/book")
         .then(res => {
           this.books = res.data.books;
-          console.log(this.books);
           this.loading = false;
         })
         .catch(() => {
@@ -134,22 +133,18 @@ export default {
 
     getDetailsBook(item) {
       this.bookDetails = Object.assign({}, item);
-      console.log("this.bookDetails", this.bookDetails);
       this.dialog = true;
     },
     searchBook() {
       if (this.searchTittle == "" || this.searchTittle == null) {
-        console.log("zerou");
         this.getBooks();
       }
-      console.log("titulo", this.searchTittle);
       axios
         .get(
           "https://testcloudmed.cloudmed.io/api/book?term=" + this.searchTittle
         )
         .then(res => {
           this.books = res.data.books;
-          console.log(this.books);
           this.loading = false;
           if (this.searchTittle == null) {
             this.getBooks();
@@ -168,14 +163,6 @@ export default {
 html, body {
   margin-top: 50px;
   overflow: auto;
-}
-
-.overflow-tittle {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
-  width: 100%;
 }
 
 .v-progress-circular {

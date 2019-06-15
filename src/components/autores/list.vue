@@ -40,7 +40,7 @@
     <template>
       <div class="text-xs-center">
         <!-- Modal cadastro/edição -->
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="300px">
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -49,11 +49,8 @@
               <v-container grid-list-md>
                 <v-form>
                   <v-layout wrap>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedAuthor.name" label="Título"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedAuthor.book" label="Livro"></v-text-field>
+                    <v-flex xs12 sm6 md12>
+                      <v-text-field v-model="editedAuthor.name" label="Nome"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -139,7 +136,6 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/author")
         .then(res => {
           this.authors = res.data.authors;
-          console.log(this.authors);
         })
         .catch(() => {
           this.snackbar = true;
@@ -189,10 +185,9 @@ export default {
           this.getAuthors();
           this.dialogDelete = false;
         })
-        .catch(res => {
+        .catch(() => {
           this.dialogDelete = false;
           this.snackbar = true;
-          console.log(res);
           this.textMessageSnack =
             "Não é possivel remover, autor relacionada a livros!";
         });

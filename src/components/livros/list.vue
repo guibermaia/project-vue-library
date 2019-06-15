@@ -47,10 +47,10 @@
                 <v-form>
                   <v-layout wrap>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.tittle" label="Título"></v-text-field>
+                      <v-text-field v-model="editedBook.tittle" autofocus label="Título"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.pageNumber" label="Número de páginas"></v-text-field>
+                      <v-text-field v-model="editedBook.pageNumber" @keypress="onlyNumbers($event)" label="Número de páginas"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-select
@@ -61,7 +61,7 @@
                       ></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.author.name" v-if="editedBook.author.name !== null" label="Nome do autor"></v-text-field>
+                      <v-text-field v-model="editedBook.nameAuthor" label="Nome do autor"></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
                       <v-select
@@ -72,7 +72,7 @@
                       ></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md4>
-                      <v-text-field v-model="editedBook.publisher.name" v-if="editedBook.publisher.name !== null" label="Nome da editora"></v-text-field>
+                      <v-text-field v-model="editedBook.namePublisher" label="Nome da editora"></v-text-field>
                     </v-flex>
                   </v-layout>
                 </v-form>
@@ -129,7 +129,6 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
-    name: "",
     headers: [
       { text: "Título", value: "Título" },
       { text: "Autor", value: "Nome do autor" },
@@ -163,13 +162,9 @@ export default {
         .get("https://testcloudmed.cloudmed.io/api/book")
         .then(res => {
           this.books = res.data.books;
-          console.log(this.books)
           this.books.forEach(e => {
             this.idsAuthors.push(e.id_Author);
             this.idsPublishers.push(e.id_Publisher);
-            this.editedBook.author.name.push(e.author.name)
-            this.editedBook.publisher.name.push(e.publisher.name)
-            console.log()
           });
         })
         .catch(() => {
@@ -245,6 +240,14 @@ export default {
       setTimeout(() => {
         this.editedBook = {};
       }, 100);
+    },
+
+    onlyNumbers(event) {
+      const pattern = /[0-9]/;
+      const inputChar = String.fromCharCode(event.charCode);
+      if (!pattern.test(inputChar)) {
+        event.preventDefault();
+      }
     },
 
     save() {
